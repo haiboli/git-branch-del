@@ -13,10 +13,11 @@
      branch-a
      branch-b
      master
-     
+     current
+
 执行
-     git-branch -e 'master'
-     
+     git-branch -e 'master|current'
+
 执行后分支
      master
 ```
