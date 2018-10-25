@@ -20,6 +20,7 @@
 
 执行后分支
      master
+     current
 ```
 
 
