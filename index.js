@@ -14,6 +14,9 @@ cmd
   .description('批量操作git')
   .parse(args)
 
+args = args.filter((item) => {
+  return item.indexOf('-') !== 0
+})
 if(cmd.all) {
   console.log(chalk.red('开始删除除master以外所有分支'))
   shell.exec(`git branch -a | grep -vE master} | xArgs git branch -D`)
