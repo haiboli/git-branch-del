@@ -17,15 +17,16 @@ cmd
 args = args.filter((item) => {
   return item.indexOf('-') !== 0
 })
+let str = "'"+args[2]+"'"
 if(cmd.all) {
   console.log(chalk.red('开始删除除master以外所有分支'))
-  shell.exec(`git branch -a | grep -vE master} | xArgs git branch -D`)
+  shell.exec(`git branch | grep -vE master} | xArgs git branch -D`)
 }
 if(cmd.include) {
   console.log(chalk.blue('开始批量删除分支'))
-  shell.exec(`git branch -a | grep -E ${args[2]} | xArgs git branch -D`)
+  shell.exec(`git branch | grep -E ${str} | xArgs git branch -D`)
 }
 if(cmd.exclude) {
   console.log(chalk.blue('开始批量删除其他分支'))
-  shell.exec(`git branch -a | grep -vE ${args[2]} | xArgs git branch -D`)
+  shell.exec(`git branch | grep -vE ${str} | xArgs git branch -D`)
 }
