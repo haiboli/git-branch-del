@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 let args = process.argv
 let cmd = require('commander'),
   chalk = require('chalk'),
@@ -17,16 +18,51 @@ cmd
 args = args.filter((item) => {
   return item.indexOf('-') !== 0
 })
-let str = "'"+args[2]+"'"
-if(cmd.all) {
+let str = "'" + args[2] + "'"
+if (cmd.all) {
   console.log(chalk.red('开始删除除master以外所有分支'))
-  shell.exec(`git branch | grep -vE master} | xArgs git branch -D`)
+  let res = shell.exec(`git branch | grep -vE master`)
+    .stdout
+  getBranch(res)
+    .map((item) => {
+      shell.exec(`git branch -D ${item}`)
+    })
+  shell.exec(`git branch`)
 }
-if(cmd.include) {
+if (cmd.include) {
   console.log(chalk.blue('开始批量删除分支'))
-  shell.exec(`git branch | grep -E ${str} | xArgs git branch -D`)
+  let res = shell.exec(`git branch | grep -E ${str}`)
+    .stdout
+  getBranch(res)
+    .map((item) => {
+      shell.exec(`git branch -D ${item}`)
+    })
+  shell.exec(`git branch`)
 }
-if(cmd.exclude) {
+if (cmd.exclude) {
   console.log(chalk.blue('开始批量删除其他分支'))
-  shell.exec(`git branch | grep -vE ${str} | xArgs git branch -D`)
+  let res = shell.exec(`git branch | grep -vE ${str}`)
+  getBranch(res)
+    .map((item) => {
+      shell.exec(`git branch -D ${item}`)
+    })
+  shell.exec(`git branch`)
+}
+
+/*//////////////helper methods///////////////////////*/
+
+function getBranch(res) {
+  if (res) {
+    let arr = res.split('\n')
+      .map((item) => {
+        item = item.replace(/(\s|\*)/g, '')
+        return item
+      })
+      .filter((item) => {
+        return item
+      })
+    return arr
+  } else {
+    return []
+  }
 }
