@@ -1,13 +1,18 @@
 #!/usr/bin/env node
+/**
+ * @author lihaibo <lihaibochina@gmail.com>
+ * @date 2018-11-02
+ * @git https://github.com/haiboli/git-branch-del
+ */
 
 let args = process.argv
-let cmd = require('commander'),
+let program = require('commander'),
   chalk = require('chalk'),
   shell = require('shelljs');
 /**
  * git 批量删除
  */
-cmd
+program
   .version('0.1.0')
   .option('-a, --all', 'delete all branch exclude master')
   .option('-e, --exclude', 'delete exclude branch')
@@ -18,49 +23,63 @@ cmd
 args = args.filter((item) => {
   return item.indexOf('-') !== 0
 })
-let str = "'" + args[2] + "'"
-if (cmd.all) {
+let partten = args[2]
+if (program.all) {
   console.log(chalk.red('开始删除除master以外所有分支'))
   let res = shell.exec(`git branch | grep -vE master`)
     .stdout
-  getBranch(res)
-    .map((item) => {
-      shell.exec(`git branch -D ${item}`)
-    })
-  shell.exec(`git branch`)
+  delBranchs(res)
 }
-if (cmd.include) {
+if (program.include) {
   console.log(chalk.blue('开始批量删除分支'))
-  let res = shell.exec(`git branch | grep -E ${str}`)
+  let res = shell.exec(`git branch`)
     .stdout
-  getBranch(res)
-    .map((item) => {
-      shell.exec(`git branch -D ${item}`)
-    })
-  shell.exec(`git branch`)
+  let branchs = getBranchs(res, partten)
+  branchs.map((item) => {
+    shell.exec(`git branch -D ${item}`)
+  })
 }
-if (cmd.exclude) {
+if (program.exclude) {
   console.log(chalk.blue('开始批量删除其他分支'))
-  let res = shell.exec(`git branch | grep -vE ${str}`)
-  getBranch(res)
-    .map((item) => {
-      shell.exec(`git branch -D ${item}`)
-    })
-  shell.exec(`git branch`)
+  let res = shell.exec(`git branch`)
+    .stdout
+  let branchs = getBranchs(res, partten, true)
+  branchs.map((item) => {
+    shell.exec(`git branch -D ${item}`)
+  })
 }
 
-/*//////////////helper methods///////////////////////*/
+/*////////////// helper methods ///////////////////////*/
 
-function getBranch(res) {
+function delBranchs(res) {
+  if (res) {
+    let arr = res.split('\n')
+      .map((item) => {
+        item = item.replace(/(\s|\*)/g, '')
+        if (item) {
+          shell.exec(`git branch -D ${item}`)
+        }
+      })
+  }
+}
+/**
+ * @param {Object} res - array for branchs
+ * @param {String} partten - partten to filter branch
+ * @param {Boolean} flag - isExcludes ? , default: false
+ *
+ */
+function getBranchs(res, partten, flag = false) {
   if (res) {
     let arr = res.split('\n')
       .map((item) => {
         item = item.replace(/(\s|\*)/g, '')
         return item
       })
-      .filter((item) => {
-        return item
+      .filter(function (item){
+        let reg = new RegExp(`^${partten.replace('*', '.')}$`, 'gi')
+        return (flag ? !reg.test(item) : reg.test(item)) && item
       })
+    console.log(arr)
     return arr
   } else {
     return []
