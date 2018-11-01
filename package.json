@@ -1,6 +1,6 @@
 {
   "name": "git-branch-batch",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,12 @@
     "url": "https://github.com/haiboli/git-branch-del/issues"
   },
   "homepage": "https://github.com/haiboli/git-branch-del",
-  "keywords": ["branch -D", "batch branch", "批量删除", "分支"],
+  "keywords": [
+    "branch -D",
+    "batch branch",
+    "批量删除",
+    "分支"
+  ],
   "author": "lihaibo@gmail.com",
   "license": "ISC",
   "dependencies": {
