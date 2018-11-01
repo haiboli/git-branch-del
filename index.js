@@ -25,7 +25,7 @@ args = args.filter((item) => {
 })
 let partten = args[2]
 if (program.all) {
-  console.log(chalk.red('开始删除除master以外所有分支'))
+  console.log(chalk.blue('开始删除除master以外所有分支'))
   let res = shell.exec(`git branch | grep -vE master`)
     .stdout
   delBranchs(res)
@@ -36,7 +36,12 @@ if (program.include) {
     .stdout
   let branchs = getBranchs(res, partten)
   branchs.map((item) => {
-    shell.exec(`git branch -D ${item}`)
+    console.log(item.indexOf('*'))
+    if(item.indexOf('*') === 0) {
+      console.log(chalk.red(`${item}分支正在被使用, 请切到其他分支再进行删除`))
+    }else {
+      shell.exec(`git branch -D ${item}`)
+    }
   })
 }
 if (program.exclude) {
@@ -45,7 +50,11 @@ if (program.exclude) {
     .stdout
   let branchs = getBranchs(res, partten, true)
   branchs.map((item) => {
-    shell.exec(`git branch -D ${item}`)
+    if(item.indexOf('*') === 0) {
+      console.log(chalk.red(`${item}分支正在被使用, 请切到其他分支再进行删除`))
+    }else {
+      shell.exec(`git branch -D ${item}`)
+    }
   })
 }
 
@@ -55,9 +64,13 @@ function delBranchs(res) {
   if (res) {
     let arr = res.split('\n')
       .map((item) => {
-        item = item.replace(/(\s|\*)/g, '')
+        item = item.replace(/(\s)/g, '')
         if (item) {
-          shell.exec(`git branch -D ${item}`)
+          if(item.indexOf('*') === 0) {
+            console.log(chalk.red(`${item}分支正在被使用, 请切到其他分支再进行删除`))
+          }else {
+            shell.exec(`git branch -D ${item}`)
+          }
         }
       })
   }
@@ -72,14 +85,14 @@ function getBranchs(res, partten, flag = false) {
   if (res) {
     let arr = res.split('\n')
       .map((item) => {
-        item = item.replace(/(\s|\*)/g, '')
+        item = item.replace(/(\s)/g, '')
         return item
       })
-      .filter(function (item){
+      .filter(function (t){
+        let item = t.replace(/\*/g, '')
         let reg = new RegExp(`^${partten.replace('*', '.')}$`, 'gi')
         return (flag ? !reg.test(item) : reg.test(item)) && item
       })
-    console.log(arr)
     return arr
   } else {
     return []
