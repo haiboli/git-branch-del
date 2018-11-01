@@ -9,6 +9,14 @@
   "bin": {
     "git-branch": "index.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:haiboli/git-branch-del.git"
+  },
+  "bugs": {
+    "url": "https://github.com/haiboli/git-branch-del/issues"
+  },
+  "homepage": "https://github.com/haiboli/git-branch-del",
   "keywords": [],
   "author": "lihaibo@gmail.com",
   "license": "ISC",
