@@ -1,4 +1,6 @@
 # gitBranchBatch
+## 目的
+    批量删除git分支
 ## 开始
     npm install git-branch-batch -g
 
