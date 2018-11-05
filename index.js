@@ -32,11 +32,10 @@ if (program.all) {
 }
 if (program.include) {
   console.log(chalk.blue('开始批量删除分支'))
-  let res = shell.exec(`git branch`)
+  let res = shell.exec(`git branch`, {silent:true})
     .stdout
   let branchs = getBranchs(res, partten)
   branchs.map((item) => {
-    console.log(item.indexOf('*'))
     if(item.indexOf('*') === 0) {
       console.log(chalk.red(`${item}分支正在被使用, 请切到其他分支再进行删除`))
     }else {
@@ -46,7 +45,7 @@ if (program.include) {
 }
 if (program.exclude) {
   console.log(chalk.blue('开始批量删除其他分支'))
-  let res = shell.exec(`git branch`)
+  let res = shell.exec(`git branch`, {silent:true})
     .stdout
   let branchs = getBranchs(res, partten, true)
   branchs.map((item) => {
@@ -69,7 +68,7 @@ function delBranchs(res) {
           if(item.indexOf('*') === 0) {
             console.log(chalk.red(`${item}分支正在被使用, 请切到其他分支再进行删除`))
           }else {
-            shell.exec(`git branch -D ${item}`)
+            shell.exec(`git branch -D ${item}`, {silent:true})
           }
         }
       })
@@ -90,7 +89,7 @@ function getBranchs(res, partten, flag = false) {
       })
       .filter(function (t){
         let item = t.replace(/\*/g, '')
-        let reg = new RegExp(`^${partten.replace('*', '.')}$`, 'gi')
+        let reg = new RegExp(`^${partten.replace(/\s/gi, '').replace(/\*/gi, '.')}$`, 'gi')
         return (flag ? !reg.test(item) : reg.test(item)) && item
       })
     return arr

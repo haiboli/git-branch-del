@@ -24,7 +24,7 @@
      current
 
 支持正则表达式：
-     git-branch -i 'branch*'  删除branch开头的分支
+     git-branch -i 'branch*|cu*'  删除branch开头和cu开头的分支
      git-branch -i '\d' 删除纯数字的分支
 ```
 
